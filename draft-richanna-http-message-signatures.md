@@ -20,6 +20,12 @@ author:
     org: Amazon
     email: richanna@amazon.com
     uri: https://www.amazon.com/
+    street: P.O. Box 81226
+    city: Seattle
+    region: WA
+    code: 98108-1226
+    country: United States of America
+
 
   - ins: J. Richer
     name: Justin Richer
@@ -32,11 +38,16 @@ author:
     org: Digital Bazaar
     email: msporny@digitalbazaar.com
     uri: https://manu.sporny.org/
+    street: 203 Roanoke Street W.
+    city: Blacksburg
+    region: VA
+    code: 24060
+    country: United States of America
 
 normative:
     RFC2104:
     RFC7230:
-    HTTP: RFC7230
+    RFC7230:
     RFC7540:
     FIPS186-4:
         target: https://csrc.nist.gov/publications/detail/fips/186/4/final
@@ -87,14 +98,25 @@ when considering adoption of this draft.
 
 # Introduction {#intro}
 
-Message integrity and authenticity are important security properties that are critical to the secure operation of many [RFC7230] applications.
-Application developers typically rely on the transport layer to provide these properties, by operating their application over {{?RFC8446}}.
-However, TLS only guarantees these properties over a single TLS connection, and the path between client and application may be composed of
-multiple independent TLS connections (for example, if the application is hosted behind a TLS-terminating gateway or if the client is behind a TLS Inspection appliance).
+Message integrity and authenticity are important security properties that are critical to the secure operation of many {{?HTTP=RFC7230}} applications.
+Application developers typically rely on the transport layer to provide these properties,
+by operating their application over {{?TLS=RFC8446}}.
+However,
+TLS only guarantees these properties over a single TLS connection,
+and the path between client and application may be composed of
+multiple independent TLS connections (for example,
+if the application is hosted behind a TLS-terminating gateway or if the client is behind a TLS Inspection appliance).
 
-In such cases, TLS cannot guarantee end-to-end message integrity or authenticity between the client and application.
-Additionally, some operating environments present obstacles that make it impractical to use TLS, or to use features necessary to provide message authenticity.
-Furthermore, some applications require the binding of an application-level key to the HTTP message, separate from any TLS certificates in use. Consequently, while TLS can meet message integrity and authenticity needs for many HTTP-based applications, it is not a universal solution.
+In such cases,
+TLS cannot guarantee end-to-end message integrity or authenticity between the client and application.
+Additionally,
+some operating environments present obstacles that make it impractical to use TLS,
+or to use features necessary to provide message authenticity.
+Furthermore,
+some applications require the binding of an application-level key to the HTTP message,
+separate from any TLS certificates in use. Consequently,
+while TLS can meet message integrity and authenticity needs for many HTTP-based applications,
+it is not a universal solution.
 
 This document defines a mechanism for providing end-to-end integrity and authenticity for content within an HTTP message.
 The mechanism allows applications to create digital signatures or message authentication codes (MACs) over only that content within the message that is meaningful and appropriate for the application.
@@ -113,14 +135,23 @@ The mechanism described in this document consists of three parts:
 
 HTTP permits and sometimes requires intermediaries to transform messages in a variety of ways.
 This may result in a recipient receiving a message that is not bitwise equivalent to the message that was oringally sent.
-In such a case, the recipient will be unable to verify a signature over the raw bytes of the sender's HTTP message, as verifying digital signatures or MACs requires both signer and verifier to have the exact same signed content.
-Since the raw bytes of the message cannot be relied upon as signed content, the signer and verifier must derive the signed content from their respective versions of the message, via a mechanism that is resilient to safe changes that do not alter the meaning of the message.
+In such a case,
+the recipient will be unable to verify a signature over the raw bytes of the sender's HTTP message,
+as verifying digital signatures or MACs requires both signer and verifier to have the exact same signed content.
+Since the raw bytes of the message cannot be relied upon as signed content,
+the signer and verifier must derive the signed content from their respective versions of the message,
+via a mechanism that is resilient to safe changes that do not alter the meaning of the message.
 
-For a variety of reasons, it is impractical to strictly define what constitutes a safe change versus an unsafe one.
-Applications use HTTP in a wide variety of ways, and may disagree on whether a particular piece of information in a message (e.g., the body, or the Date header field) is relevant.
+For a variety of reasons,
+it is impractical to strictly define what constitutes a safe change versus an unsafe one.
+Applications use HTTP in a wide variety of ways,
+and may disagree on whether a particular piece of information in a message (e.g.,
+the body,
+or the Date header field) is relevant.
 Thus a general purpose solution must provide signers with some degree of control over which message content is signed.
 
-HTTP applications may be running in environments that do not provide complete access to or control over HTTP messages (such as a web browser's JavaScript environment), or may be using libraries that abstract away the details of the protocol (such as [the Java HTTPClient library](https://openjdk.java.net/groups/net/httpclient/intro.html)).
+HTTP applications may be running in environments that do not provide complete access to or control over HTTP messages (such as a web browser's JavaScript environment),
+or may be using libraries that abstract away the details of the protocol (such as [the Java HTTPClient library](https://openjdk.java.net/groups/net/httpclient/intro.html)).
 These applications need to be able to generate and verify signatures despite incomplete knowledge of the HTTP message.
 
 ## HTTP Message Transformations {#about_sigs}
@@ -139,7 +170,9 @@ that may occur under HTTP, provided as context:
 
 ## Safe Transformations
 
-Based on the definition of HTTP and the requirements described above, we can identify certain types of transformations that should not prevent signature verification, even when performed on content covered by the signature.
+Based on the definition of HTTP and the requirements described above,
+we can identify certain types of transformations that should not prevent signature verification,
+even when performed on content covered by the signature.
 The following list describes those transformations:
 
 Additionally, all changes to content not covered by the signature are considered safe.
@@ -196,24 +229,35 @@ This syntax is deprecated in [RFC7230], and senders MUST NOT generate messages t
 
 # Identifying and Canonicalizing Content {#content-identifiers}
 
-In order to allow signers and verifiers to establish which content is covered by a signature, this document defines content identifiers for signature metadata and discrete pieces of message content that may be covered by an HTTP Message Signature.
+In order to allow signers and verifiers to establish which content is covered by a signature,
+this document defines content identifiers for signature metadata and discrete pieces of message content that may be covered by an HTTP Message Signature.
 
-Some content within HTTP messages may undergo transformations that change the bitwise value without altering meaning of the content (for example, the merging together of header fields with the same name).
-Message content must therefore be canonicalized before it is signed, to ensure that a signature can be verified despite such innocuous transformations.
+Some content within HTTP messages may undergo transformations that change the bitwise value without altering meaning of the content (for example,
+the merging together of header fields with the same name).
+Message content must therefore be canonicalized before it is signed,
+to ensure that a signature can be verified despite such innocuous transformations.
 This document defines rules for each content identifier that transform the identifier's associated content into such a canonical form.
 
-The following sections define content identifiers, their associated content, and their canonicalization rules.
+The following sections define content identifiers,
+their associated content,
+and their canonicalization rules.
 
 ## HTTP Header Fields
 
 An HTTP header field value is identified by its header field name.
-While HTTP header field names are case-insensitive, implementations SHOULD use lowercased field names (e.g., `content-type`, `date`, `etag`) when using them as content identifiers.
+While HTTP header field names are case-insensitive,
+implementations SHOULD use lowercased field names (e.g.,
+`content-type`,
+`date`,
+`etag`) when using them as content identifiers.
 
 An HTTP header field value is canonicalized as follows:
 
-1. Create an ordered list of the field values of each instance of the header field in the message, in the order that they occur (or will occur) in the message.
+1. Create an ordered list of the field values of each instance of the header field in the message,
+   in the order that they occur (or will occur) in the message.
 2. Strip leading and trailing whitespace from each item in the list.
-3. Concatenate the list items together, with a comma "," and space " " between each item. The resulting string is the canonicalized value.
+3. Concatenate the list items together,
+   with a comma "," and space " " between each item. The resulting string is the canonicalized value.
 
 
 
@@ -264,11 +308,15 @@ as defined in [Section 4.16](https://pubs.opengroup.org/onlinepubs/9699919799/ba
 
 The signature's Expiration Time ({{signature-metadata}}) is identified by the `(expired)` identifier.
 
-Its canonicalized value is a Decimal String containing the signature's Expiration Time expressed as the number of seconds since the Epoch, as defined in [Section 4.16](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_16) of {{POSIX.1}}.
+Its canonicalized value is a Decimal String containing the signature's 
+Expiration Time expressed as the number of seconds since the Epoch,
+as defined in [Section 4.16](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_16) 
+of {{POSIX.1}}.
 
 ## Target Endpoint
 
-The request target endpoint, consisting of the request method and the path and query of the effective request URI, is identified by the `(request-target)` identifier.
+The request target endpoint, consisting of the request method and the path and query of the effective request URI,
+is identified by the `(request-target)` identifier.
 
 Its value is canonicalized as follows:
 
@@ -299,8 +347,11 @@ TODO: render this table in some way.
 
 # HTTP Message Signatures {#message-signatures}
 
-An HTTP Message Signature is a signature over a string generated from a subset of the content in an HTTP message and metadata about the signature itself.
-When successfully verified against an HTTP message, it provides cryptographic proof that with respect to the subset of content that was signed, the message is semantically equivalent to the message for which the signature was generated.
+An HTTP Message Signature is a signature over a string generated
+from a subset of the content in an HTTP message and metadata about the signature itself.
+When successfully verified against an HTTP message,
+it provides cryptographic proof that with respect to the subset of content that was signed,
+the message is semantically equivalent to the message for which the signature was generated.
 
 ## Signature Metadata {#signature-metadata}
 
@@ -336,25 +387,38 @@ The following sections describe each of these steps in detail.
 
 ### Choose and Set Signature Metadata Properties {#choose-metadata}
 
-1. The signer chooses an HTTP Signature Algorithm from those registered in the HTTP Signature Algorithms Registry defined by this document, and sets the signature's Algorithm property to that value.
+1. The signer chooses an HTTP Signature Algorithm from those registered in the HTTP Signature Algorithms Registry defined by this document,
+and sets the signature's Algorithm property to that value.
 The signer MUST NOT choose an algorithm marked "Deprecated".
 The mechanism by which the signer chooses an algorithm is out of scope for this document.
 
-2. The signer chooses key material to use for signing and verification, and sets the signature's Verification Key Material property to the key material required for verification.
-The signer MUST choose key material that is appropriate for the signature's Algorithm, and that conforms to any requirements defined by the Algorithm, such as key size or format.
+2. The signer chooses key material to use for signing and verification,
+and sets the signature's Verification Key Material property to the key material required for verification.
+The signer MUST choose key material that is appropriate for the signature's Algorithm,
+and that conforms to any requirements defined by the Algorithm,
+such as key size or format.
 The mechanism by which the signer chooses key material is out of scope for this document.
 
 3. The signer sets the signature's Creation Time property to the current time.
 
 4. The signer sets the signature's Expiration Time property to the time at which the signature is to expire, or to undefined if the signature will not expire.
 
-5. The signer creates an ordered list of content identifiers representing the message content and signature metadata to be covered by the signature, and assigns this list as the signature's Covered Content.
+5. The signer creates an ordered list of content identifiers representing the message content and signature metadata to be covered by the signature,
+and assigns this list as the signature's Covered Content.
 Each identifier MUST be one of those defined in Section 2.
-This list MUST NOT be empty, as this would result in creating a signature over the empty string.
-If the signature's Algorithm name does not start with rsa, hmac, or ecdsa, signers SHOULD include (created) and (request-target) in the list.
-If the signature's Algorithm starts with rsa, hmac, or ecdsa, signers SHOULD include date and (request-target) in the list.
+This list MUST NOT be empty,
+as this would result in creating a signature over the empty string.
+If the signature's Algorithm name does not start with rsa,
+hmac,
+or ecdsa,
+signers SHOULD include (created) and (request-target) in the list.
+If the signature's Algorithm starts with rsa,
+hmac,
+or ecdsa,
+signers SHOULD include date and (request-target) in the list.
 Further guidance on what to include in this list and in what order is out of scope for this document.
-However, the list order is significant and once established for a given signature it MUST be preserved for that signature.
+However,
+the list order is significant and once established for a given signature it MUST be preserved for that signature.
 
 
 For example, given the following HTTP message:
@@ -385,16 +449,26 @@ The following table presents a non-normative example of metadata values that a s
 ### Create the Signature Input {#canonicalization}
 
 The Signature Input is a US-ASCII string containing the content that will be signed.
-To create it, the signer concatenates together entries for each identifier in the signature's Covered Content in the order it occurs in the list, with each entry separated by a newline `"\n"`.
-An identifier's entry is a US-ASCII string consisting of the lowercased identifier followed with a colon `":"`, a space `" "`, and the identifier's canonicalized value (described below).
+To create it,
+the signer concatenates together entries for each identifier in the signature's Covered Content in the order it occurs in the list,
+with each entry separated by a newline `"\n"`.
+An identifier's entry is a US-ASCII string consisting of the lowercased identifier followed with a colon `":"`,
+a space `" "`,
+and the identifier's canonicalized value (described below).
 
-If Covered Content contains `(created)` and the signature's Creation Time is undefined or the signature's Algorithm name starts with `rsa`, `hmac`, or `ecdsa` an implementation MUST produce an error.
+If Covered Content contains `(created)` and the signature's Creation Time is undefined or the signature's Algorithm name starts with `rsa`,
+`hmac`,
+or `ecdsa` an implementation MUST produce an error.
 
-If Covered Content contains `(expires)` and the signature does not have an Expiration Time or the signature's Algorithm name starts with `rsa`, `hmac`, or `ecdsa` an implementation MUST produce an error.
+If Covered Content contains `(expires)` and the signature does not have an Expiration Time or the signature's Algorithm name starts with `rsa`,
+`hmac`,
+or `ecdsa` an implementation MUST produce an error.
 
-If Covered Content contains an identifier for a header field that is not present or malformed in the message, the implementation MUST produce an error.
+If Covered Content contains an identifier for a header field that is not present or malformed in the message,
+the implementation MUST produce an error.
 
-For the non-normative example Signature metadata in {{example-metadata}},  the corresponding Signature Input is:
+For the non-normative example Signature metadata in {{example-metadata}},
+ the corresponding Signature Input is:
 
 ~~~
 (request-target): get /foo
@@ -409,11 +483,13 @@ x-example: Example header with some whitespace.
 
 ### Sign the Signature Input {#sign-sig-input}
 
-The signer signs the Signature Input using the signing algorithm described by the signature's Algorithm property, and the key material chosen by the signer.
+The signer signs the Signature Input using the signing algorithm described by the signature's Algorithm property,
+and the key material chosen by the signer.
 The signer then encodes the result of that operation as a base 64-encoded string {{?RFC4648}}.
 This string is the signature value.
 
-For the non-normative example Signature metadata in {{choose-metadata}} and Signature Input in {{example-sig-input}}, the corresponding signature value is:
+For the non-normative example Signature metadata in {{choose-metadata}} and Signature Input in {{example-sig-input}},
+the corresponding signature value is:
 
 ~~~
 T1l3tWH2cSP31nfuvc3nVaHQ6IAu9YLEXg2pCeEOJETXnlWbgKtBTaXV6LNQWtf4O42V2
@@ -442,12 +518,16 @@ In order to verify a signature, a verifier MUST:
 A signature with a Creation Time that is in the future or an Expiration Time that is in the past MUST NOT be processed.
 
 The verifier MUST ensure that a signature's Algorithm is appropriate for the key material the verifier will use to verify the signature.
-If the Algorithm is not appropriate for the key material (for example, if it is the wrong size, or in the wrong format), the signature MUST NOT be processed.
+If the Algorithm is not appropriate for the key material (for example,
+if it is the wrong size,
+or in the wrong format),
+the signature MUST NOT be processed.
 
 ### Enforcing Application Requirements
 
 The verification requirements specified in this document are intended as a baseline set of restrictions that are generally applicable to all use cases.
-Applications using HTTP Message Signatures MAY impose requirements above and beyond those specified by this document, as appropriate for their use case.
+Applications using HTTP Message Signatures MAY impose requirements above and beyond those specified by this document,
+as appropriate for their use case.
 
 Some non-normative examples of additional requirements an application might define are:
 
@@ -457,7 +537,9 @@ Some non-normative examples of additional requirements an application might defi
 - Requiring keys to be of a certain size (e.g., 2048 bits vs. 1024 bits).
 
 Application-specific requirements are expected and encouraged.
-When an application defines additional requirements, it MUST enforce them during the signature verification process, and signature verification MUST fail if the signature does not conform to the application's requirements.
+When an application defines additional requirements,
+it MUST enforce them during the signature verification process,
+and signature verification MUST fail if the signature does not conform to the application's requirements.
 
 Applications MUST enforce the requirements defined in this document.
 Regardless of use case, applications MUST NOT accept signatures that do not conform to these requirements.
@@ -465,7 +547,9 @@ Regardless of use case, applications MUST NOT accept signatures that do not conf
 # The 'Signature' HTTP Header {#sig}
 
 The "Signature" HTTP header provides a mechanism to attach a signature to the HTTP message from which it was generated.
-The header field name is "Signature" and its value is a list of parameters and values, formatted according to the `signature` syntax defined below, using the extended Augmented Backus-Naur Form (ABNF) notation used in [RFC7230].
+The header field name is "Signature" and its value is a list of parameters and values,
+formatted according to the `signature` syntax defined below,
+using the extended Augmented Backus-Naur Form (ABNF) notation used in [RFC7230].
 
 
 ~~~ abnf
@@ -718,11 +802,11 @@ This presents metadata for a Signature using `hs2019`, over minimum recommended 
 
 |Property|Value|
 |--- |--- |
-|Algorithm|hs2019, using RSASSA-PSS  using SHA-512|
+|Algorithm|hs2019, using RSASSA-PSS [RFC8017] using SHA-512 [RFC6234]|
 |Covered Content|(created) (request-target)|
 |Creation Time|8:51:35 PM GMT, June 7th, 2014|
 |Expiration Time|Undefined|
-|Verification Key Material|The public key specified in .|
+|Verification Key Material|The public key specified in {{example-key-rsa-test}}.|
 
 
 The Signature Input is:
@@ -759,7 +843,16 @@ Signature: keyId="test-key-a", created=1402170695,
 
 This presents metadata for a Signature using `hs2019` that covers all header fields in the request:
 
+|Property|Value|
+|--- |--- |
+|Algorithm|hs2019, using RSASSA-PSS [RFC8017] using SHA-512 [RFC6234]|
+|Covered Content|(created), (request-target), host, date, content-type, digest, content-length|
+|Creation Time|8:51:35 PM GMT, June 7th, 2014|
+|Expiration Time|Undefined|
+|Verification Key Material|The public key specified in {{example-key-rsa-test}}.|
+
 The Signature Input is:
+
 ~~~
 (created): 1402170695
 (request-target): post /foo?param=value&pet=dog
@@ -813,6 +906,14 @@ Signature: keyId="test-key-a", (created): 1402170695,
 
 The corresponding signature metadata derived from this header field is:
 
+|Property|Value|
+|--- |--- |
+|Algorithm|hs2019, using RSASSA-PSS  using SHA-256|
+|Covered Content|(created)|
+|Creation Time|8:51:35 PM GMT, June 7th, 2014|
+|Expiration Time|Undefined|
+|Verification Key Material|The public key specified in {{example-key-rsa-test}}.|
+
 The corresponding Signature Input is:
 
 ~~~
@@ -836,6 +937,14 @@ Signature: algorithm="hs2019", keyId="test-key-a",
 
 The corresponding signature metadata derived from this header field is:
 
+|Property|Value|
+|--- |--- |
+|Algorithm|hs2019, using RSASSA-PSS  using SHA-512|
+|Covered Content|(created)|
+|Creation Time|8:51:35 PM GMT, June 7th, 2014|
+|Expiration Time|Undefined|
+|Verification Key Material|The public key specified in {{example-key-rsa-test}}.|
+
 The corresponding Signature Input is:
 
 ~~~
@@ -858,6 +967,15 @@ Signature: algorithm="rsa-256", keyId="test-key-b",
 ~~~
 
 The corresponding signature metadata derived from this header field is:
+
+|Property|Value|
+|--- |--- |
+|Algorithm|rsa-256|
+|Covered Content|date|
+|Creation Time|Undefined|
+|Expiration Time|Undefined|
+|Verification Key Material|The public key specified in {{example-key-rsa-test}}.|
+
 
 The corresponding Signature Input is:
 
@@ -1036,7 +1154,16 @@ any verifier can use the `created` field and an internal lifetime or offset to c
 
 ### Define more content identifiers
 
-It should be possible to independently include the following content and metadata properties in Covered Content:
+It should be possible to independently include the following
+content and metadata properties in Covered Content:
+
+- The signature's Algorithm
+- The signature's Covered Content
+- The value used for the keyId parameter
+- Request method
+- Individual components of the effective request URI: scheme, authority, path, query
+- Status code
+- Request body (currently supported via Digest header {{?RFC3230}}  )
 
 ### Multiple signature support
 
