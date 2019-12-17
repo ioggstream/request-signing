@@ -36,6 +36,7 @@ author:
 normative:
     RFC2104:
     RFC7230:
+    HTTP: RFC7230
     RFC7540:
     FIPS186-4:
         target: https://csrc.nist.gov/publications/detail/fips/186/4/final
@@ -101,6 +102,13 @@ Strict canonicalization rules ensure that the verifier can verify the signature 
 
 The mechanism described in this document consists of three parts:
 
+- A common nomenclature and canonicalization rule set for the different protocol elements
+    and other content within HTTP messages.
+- Algorithms for generating and verifying signatures over HTTP message content 
+    using this nomenclature and rule set.
+- A mechanism for attaching a signature and related metadata to an HTTP message.
+
+
 ## Requirements Discussion
 
 HTTP permits and sometimes requires intermediaries to transform messages in a variety of ways.
@@ -119,7 +127,15 @@ These applications need to be able to generate and verify signatures despite inc
 
 As mentioned earlier, HTTP explicitly permits and in some cases requires implementations to transform messages in a variety of ways.
 Implementations are required to tolerate many of these transformations.
-What follows is a non-normative and non-exhaustive list of transformations that may occur under HTTP, provided as context:
+What follows is a non-normative and non-exhaustive list of transformations
+that may occur under HTTP, provided as context:
+
+- Re-ordering of header fields with different header field names ([HTTP], Section 3.2.2).
+- Combination of header fields with the same field name ([HTTP], Section 3.2.2).
+- Removal of header fields listed in the Connection header field ([HTTP], Section 6.1).
+- Addition of header fields that indicate control options ([HTTP], Section 6.1).
+- Addition or removal of a transfer coding ([HTTP], Section 5.7.2).
+- Addition of header fields such as Via ([HTTP], Section 5.7.1) and Forwarded ([RFC7239], Section 4).
 
 ## Safe Transformations
 
@@ -127,6 +143,17 @@ Based on the definition of HTTP and the requirements described above, we can ide
 The following list describes those transformations:
 
 Additionally, all changes to content not covered by the signature are considered safe.
+
+- Combination of header fields with the same field name.
+- Reordering of header fields with different names.
+- Conversion between HTTP/1.x and HTTP/2, or vice-versa.
+- Changes in casing (e.g., "Origin" to "origin") of any case-insensitive content such as
+  header field names, request URI scheme, or host.
+- Addition or removal of leading or trailing whitespace to a header field value.
+- Addition or removal of obs-folds.
+- Changes to the request-target and Host header field that when applied together do not result
+  in a change to the message's effective request URI, as defined in Section 5.5 of [HTTP].
+
 
 ## Conventions and Terminology {#definitions}
 
@@ -184,17 +211,54 @@ While HTTP header field names are case-insensitive, implementations SHOULD use l
 
 An HTTP header field value is canonicalized as follows:
 
+1. Create an ordered list of the field values of each instance of the header field in the message, in the order that they occur (or will occur) in the message.
+2. Strip leading and trailing whitespace from each item in the list.
+3. Concatenate the list items together, with a comma "," and space " " between each item. The resulting string is the canonicalized value.
+
+
+
 ### Canonicalization Examples
 
 This section contains non-normative examples of canonicalized values for header fields, given the following example HTTP message:
 
+
+~~~
+HTTP/1.1 200 OK
+Server: www.example.com
+Date: Tue, 07 Jun 2014 20:51:35 GMT
+X-OWS-Header:   Leading and trailing whitespace.   
+X-Obs-Fold-Header: Obsolete  
+    line folding.
+X-Empty-Header: 
+Cache-Control: max-age=60
+Cache-Control:    must-revalidate
+~~~
+
 The following table shows example canonicalized values for header fields, given that message:
+
+
+|Header Field|Canonicalized Value|
+|--- |--- |
+|(cache-control)|max-age=60, must-revalidate|
+|(date)|Tue, 07 Jun 2014 20:51:35 GMT|
+|(server)|www.example.com|
+|(x-empty-header)||
+|(x-obs-fold-header)|Obsolete line folding.|
+|(x-ows-header)|Leading and trailing whitespace.|
+{: title="Non-normative examples of header field canonicalization."}
+
 
 ## Signature Creation Time
 
 The signature's Creation Time ({{signature-metadata}}) is identified by the `(created)` identifier.
 
-Its canonicalized value is an Integer String containing the signature's Creation Time expressed as the number of seconds since the Epoch, as defined in [Section 4.16](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_16) of {{POSIX.1}}.
+Its canonicalized value is an Integer String containing the signature's 
+Creation Time expressed as the number of seconds since the Epoch, 
+as defined in [Section 4.16](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_16) of {{POSIX.1}}.
+
+> The use of seconds since the Epoch to canonicalize a timestamp 
+> simplifies processing and avoids timezone management
+> required by specifications such as [RFC3339].
 
 ## Signature Expiration Time
 
@@ -208,9 +272,19 @@ The request target endpoint, consisting of the request method and the path and q
 
 Its value is canonicalized as follows:
 
+1. Take the lowercased HTTP method of the message.
+2. Append a space " ".
+3. Append the path and query of the request target of the message,
+   formatted according to the rules defined for the :path pseudo-header
+   in [HTTP2], Section 8.1.2.3.
+   The resulting string is the canonicalized value.
+
 ### Canonicalization Examples
 
-The following table contains non-normative example HTTP messages and their canonicalized `(request-target)` values.
+The following table contains non-normative example HTTP messages and their
+canonicalized `(request-target)` values.
+
+
 
 # HTTP Message Signatures {#message-signatures}
 
