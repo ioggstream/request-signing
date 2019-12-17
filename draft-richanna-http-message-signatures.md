@@ -610,6 +610,16 @@ Future assignments and modifications to existing assignment are to be made throu
 The table below contains the initial contents of the HTTP Signature Parameters Registry.
 Each row in the table represents a distinct entry in the registry.
 
+|Name|Status|Reference(s)|
+|--- |--- |--- |
+|algorithm|Active | {{params}} of this document|
+|created|Active   | {{params}} of this document|
+|expires|Active   | {{params}} of this document|
+|headers|Active   | {{params}} of this document|
+|keyId|Active     | {{params}} of this document|
+|signature|Active | {{params}} of this document|
+{: title="Initial contents of the HTTP Signature Parameters Registry." }
+
 # Security Considerations {#security}
 
 [[ TODO: need to dive deeper on this section; not sure how much of what's referenced below is actually applicable, or if it covers everything we need to worry about. ]]
@@ -631,17 +641,74 @@ These keys MUST NOT be used for any purpose other than testing.
 
 The following key is a 2048-bit RSA public and private key pair:
 
+
+~~~
+-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEAhAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsPBRrw
+WEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsdJKFq
+MGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd/QBwVW9OwNFhekro3RtlinV0a75jfZg
+kne/YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKIlE0P
+uKxI4T+HIaFpv8+rdV6eUgOrB2xeI1dSFFn/nnv5OoZJEIB+VmuKn3DCUcCZSFlQ
+PSXSfBDiUGhwOw76WuSSsf1D4b/vLoJ10wIDAQAB
+-----END RSA PUBLIC KEY-----
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIEqAIBAAKCAQEAhAKYdtoeoy8zcAcR874L8cnZxKzAGwd7v36APp7Pv6Q2jdsP
+BRrwWEBnez6d0UDKDwGbc6nxfEXAy5mbhgajzrw3MOEt8uA5txSKobBpKDeBLOsd
+JKFqMGmXCQvEG7YemcxDTRPxAleIAgYYRjTSd/QBwVW9OwNFhekro3RtlinV0a75
+jfZgkne/YiktSvLG34lw2zqXBDTC5NHROUqGTlML4PlNZS5Ri2U4aCNx2rUPRcKI
+lE0PuKxI4T+HIaFpv8+rdV6eUgOrB2xeI1dSFFn/nnv5OoZJEIB+VmuKn3DCUcCZ
+SFlQPSXSfBDiUGhwOw76WuSSsf1D4b/vLoJ10wIDAQABAoIBAG/JZuSWdoVHbi56
+vjgCgkjg3lkO1KrO3nrdm6nrgA9P9qaPjxuKoWaKO1cBQlE1pSWp/cKncYgD5WxE
+CpAnRUXG2pG4zdkzCYzAh1i+c34L6oZoHsirK6oNcEnHveydfzJL5934egm6p8DW
++m1RQ70yUt4uRc0YSor+q1LGJvGQHReF0WmJBZHrhz5e63Pq7lE0gIwuBqL8SMaA
+yRXtK+JGxZpImTq+NHvEWWCu09SCq0r838ceQI55SvzmTkwqtC+8AT2zFviMZkKR
+Qo6SPsrqItxZWRty2izawTF0Bf5S2VAx7O+6t3wBsQ1sLptoSgX3QblELY5asI0J
+YFz7LJECgYkAsqeUJmqXE3LP8tYoIjMIAKiTm9o6psPlc8CrLI9CH0UbuaA2JCOM
+cCNq8SyYbTqgnWlB9ZfcAm/cFpA8tYci9m5vYK8HNxQr+8FS3Qo8N9RJ8d0U5Csw
+DzMYfRghAfUGwmlWj5hp1pQzAuhwbOXFtxKHVsMPhz1IBtF9Y8jvgqgYHLbmyiu1
+mwJ5AL0pYF0G7x81prlARURwHo0Yf52kEw1dxpx+JXER7hQRWQki5/NsUEtv+8RT
+qn2m6qte5DXLyn83b1qRscSdnCCwKtKWUug5q2ZbwVOCJCtmRwmnP131lWRYfj67
+B/xJ1ZA6X3GEf4sNReNAtaucPEelgR2nsN0gKQKBiGoqHWbK1qYvBxX2X3kbPDkv
+9C+celgZd2PW7aGYLCHq7nPbmfDV0yHcWjOhXZ8jRMjmANVR/eLQ2EfsRLdW69bn
+f3ZD7JS1fwGnO3exGmHO3HZG+6AvberKYVYNHahNFEw5TsAcQWDLRpkGybBcxqZo
+81YCqlqidwfeO5YtlO7etx1xLyqa2NsCeG9A86UjG+aeNnXEIDk1PDK+EuiThIUa
+/2IxKzJKWl1BKr2d4xAfR0ZnEYuRrbeDQYgTImOlfW6/GuYIxKYgEKCFHFqJATAG
+IxHrq1PDOiSwXd2GmVVYyEmhZnbcp8CxaEMQoevxAta0ssMK3w6UsDtvUvYvF22m
+qQKBiD5GwESzsFPy3Ga0MvZpn3D6EJQLgsnrtUPZx+z2Ep2x0xc5orneB5fGyF1P
+WtP+fG5Q6Dpdz3LRfm+KwBCWFKQjg7uTxcjerhBWEYPmEMKYwTJF5PBG9/ddvHLQ
+EQeNC8fHGg4UXU8mhHnSBt3EA10qQJfRDs15M38eG2cYwB1PZpDHScDnDA0=
+-----END RSA PRIVATE KEY-----
+~~~
+
 ## Example 
 
 The table below maps example `keyId` values to associated algorithms and/or keys.
-These are example mappings that are valid only within the context of examples in examples within this and future documents that reference this section.
-Unless otherwise specified, within the context of examples it should be assumed that the signer and verifier understand these `keyId` mappings.
-These `keyId` values are not reserved, and deployments are free to use them, with these associations or others.
+These are example mappings that are valid only within the context of examples in examples within this and
+future documents that reference this section.
+Unless otherwise specified,
+within the context of examples it should be assumed that the signer and
+verifier understand these `keyId` mappings.
+These `keyId` values are not reserved,
+and deployments are free to use them,
+with these associations or others.
 
 ## Test Cases
 
 This section provides non-normative examples that may be used as test cases to validate implementation correctness.
 These examples are based on the following HTTP message:
+
+
+~~~
+POST /foo?param=value&pet=dog HTTP/1.1
+Host: example.com
+Date: Tue, 07 Jun 2014 20:51:35 GMT
+Content-Type: application/json
+Digest: SHA-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=
+Content-Length: 18
+
+{"hello": "world"}
+~~~
 
 ### Signature Generation
 
@@ -649,21 +716,84 @@ These examples are based on the following HTTP message:
 
 This presents metadata for a Signature using `hs2019`, over minimum recommended data to sign:
 
+|Property|Value|
+|--- |--- |
+|Algorithm|hs2019, using RSASSA-PSS  using SHA-512|
+|Covered Content|(created) (request-target)|
+|Creation Time|8:51:35 PM GMT, June 7th, 2014|
+|Expiration Time|Undefined|
+|Verification Key Material|The public key specified in .|
+
+
 The Signature Input is:
+
+~~~
+(created): 1402170695
+(request-target): post /foo?param=value&pet=dog
+~~~
 
 The signature value is:
 
+~~~
+e3y37nxAoeuXw2KbaIxE2d9jpE7Z9okgizg6QbD2Z7fUVUvog+ZTKKLRBnhNglVIY6fAa
+YlHwx7ZAXXdBVF8gjWBPL6U9zRrB4PFzjoLSxHaqsvS0ZK9FRxpenptgukaVQ1aeva3PE
+1aD6zZ93df2lFIFXGDefYCQ+M/SrDGQOFvaVykEkte5mO6zQZ/HpokjMKvilfSMJS+vbv
+C1GJItQpjs636Db+7zB2W1BurkGxtQdCLDXuIDg4S8pPSDihkch/dUzL2BpML3PXGKVXw
+HOUkVG6Q2ge07IYdzya6N1fIVA9eKI1Y47HT35QliVAxZgE0EZLo8mxq19ReIVvuFg==
+~~~
+
 A possible Signature header for this signature is:
+
+~~~
+Signature: keyId="test-key-a", created=1402170695,
+    headers="(created) (request-target)",
+    signature="e3y37nxAoeuXw2KbaIxE2d9jpE7Z9okgizg6QbD2Z7fUVUvog+ZTKK
+        LRBnhNglVIY6fAaYlHwx7ZAXXdBVF8gjWBPL6U9zRrB4PFzjoLSxHaqsvS0ZK
+        9FRxpenptgukaVQ1aeva3PE1aD6zZ93df2lFIFXGDefYCQ+M/SrDGQOFvaVyk
+        Ekte5mO6zQZ/HpokjMKvilfSMJS+vbvC1GJItQpjs636Db+7zB2W1BurkGxtQ
+        dCLDXuIDg4S8pPSDihkch/dUzL2BpML3PXGKVXwHOUkVG6Q2ge07IYdzya6N1
+        fIVA9eKI1Y47HT35QliVAxZgE0EZLo8mxq19ReIVvuFg=="
+~~~
 
 #### "hs2019" signature covering all header fields
 
 This presents metadata for a Signature using `hs2019` that covers all header fields in the request:
 
 The Signature Input is:
+~~~
+(created): 1402170695
+(request-target): post /foo?param=value&pet=dog
+host: example.com
+date: Tue, 07 Jun 2014 20:51:35 GMT
+content-type: application/json
+digest: SHA-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=
+content-length: 18
+~~~
 
 The signature value is:
 
+~~~
+KXUj1H3ZOhv3Nk4xlRLTn4bOMlMOmFiud3VXrMa9MaLCxnVmrqOX5BulRvB65YW/wQp0o
+T/nNQpXgOYeY8ovmHlpkRyz5buNDqoOpRsCpLGxsIJ9cX8XVsM9jy+Q1+RIlD9wfWoPHh
+qhoXt35ZkasuIDPF/AETuObs9QydlsqONwbK+TdQguDK/8Va1Pocl6wK1uLwqcXlxhPEb
+55EmdYB9pddDyHTADING7K4qMwof2mC3t8Pb0yoLZoZX5a4Or4FrCCKK/9BHAhq/RsVk0
+dTENMbTB4i7cHvKQu+o9xuYWuxyvBa0Z6NdOb0di70cdrSDEsL5Gz7LBY5J2N9KdGg==
+~~~
+
 A possible Signature header for this signature is:
+
+~~~
+Signature: keyId="test-key-a", algorithm="hs2019",
+    created=1402170695,
+    headers="(request-target) (created) host date content-type digest
+        content-length",
+    signature="KXUj1H3ZOhv3Nk4xlRLTn4bOMlMOmFiud3VXrMa9MaLCxnVmrqOX5B
+        ulRvB65YW/wQp0oT/nNQpXgOYeY8ovmHlpkRyz5buNDqoOpRsCpLGxsIJ9cX8
+        XVsM9jy+Q1+RIlD9wfWoPHhqhoXt35ZkasuIDPF/AETuObs9QydlsqONwbK+T
+        dQguDK/8Va1Pocl6wK1uLwqcXlxhPEb55EmdYB9pddDyHTADING7K4qMwof2m
+        C3t8Pb0yoLZoZX5a4Or4FrCCKK/9BHAhq/RsVk0dTENMbTB4i7cHvKQu+o9xu
+        YWuxyvBa0Z6NdOb0di70cdrSDEsL5Gz7LBY5J2N9KdGg=="
+~~~
 
 ### Signature Verification
 
@@ -671,25 +801,69 @@ A possible Signature header for this signature is:
 
 This presents a Signature header containing only the minimal required parameters:
 
+~~~
+Signature: keyId="test-key-a", (created): 1402170695,
+    signature="V3SijFpJOvDUT8t1/EnYli/4TbF2AGqwBGiGUGrgClCkiOAIlOxxY7
+        2Mr13DccFkYzg3gX1jIOpKXzH70C5bru4b71SBG+ShiJLu34gHCG33iw44NLG
+        UvT5+F+LCKbbHberyk8eyYsZ+TLwtZAYKafxfNOWQXF4o3QaWslDMm8Tcgrd8
+        onM45ayFyR4nXRlcGad4PISYGz8PmO4Y+K8RYOyDkgsmRxKtftFQUYG41anyE
+        lccNLfEfLBKsyV6kxr36U1Q7FdUopLv8kqluQySrWD6kesvFxNvbEOi+1uZqT
+        uFlK8ZldITQiqtNYaabRjQFZio63gma2y+UAaTGLdM9A=="
+~~~
+
 The corresponding signature metadata derived from this header field is:
 
 The corresponding Signature Input is:
+
+~~~
+(created): 1402170695
+~~~
 
 #### Minimal Recommended Signature Header
 
 This presents a Signature header containing only the minimal required and recommended parameters:
 
+~~~
+Signature: algorithm="hs2019", keyId="test-key-a",
+    (created): 1402170695,
+    signature="V3SijFpJOvDUT8t1/EnYli/4TbF2AGqwBGiGUGrgClCkiOAIlOxxY7
+        2Mr13DccFkYzg3gX1jIOpKXzH70C5bru4b71SBG+ShiJLu34gHCG33iw44NLG
+        UvT5+F+LCKbbHberyk8eyYsZ+TLwtZAYKafxfNOWQXF4o3QaWslDMm8Tcgrd8
+        onM45ayFyR4nXRlcGad4PISYGz8PmO4Y+K8RYOyDkgsmRxKtftFQUYG41anyE
+        lccNLfEfLBKsyV6kxr36U1Q7FdUopLv8kqluQySrWD6kesvFxNvbEOi+1uZqT
+        uFlK8ZldITQiqtNYaabRjQFZio63gma2y+UAaTGLdM9A=="
+~~~
+
 The corresponding signature metadata derived from this header field is:
 
 The corresponding Signature Input is:
+
+~~~
+(created): 1402170695
+~~~
 
 #### Minimal Signature Header using 
 
 This presents a minimal Signature header for a signature using the `rsa-256` algorithm:
 
+~~~
+Signature: algorithm="rsa-256", keyId="test-key-b",
+    headers="date",
+    signature="HtXycCl97RBVkZi66ADKnC9c5eSSlb57GnQ4KFqNZplOpNfxqk62Jz
+        Z484jXgLvoOTRaKfR4hwyxlcyb+BWkVasApQovBSdit9Ml/YmN2IvJDPncrlh
+        PDVDv36Z9/DiSO+RNHD7iLXugdXo1+MGRimW1RmYdenl/ITeb7rjfLZ4b9VNn
+        LFtVWwrjhAiwIqeLjodVImzVc5srrk19HMZNuUejK6I3/MyN3+3U8tIRW4LWz
+        x6ZgGZUaEEP0aBlBkt7Fj0Tt5/P5HNW/Sa/m8smxbOHnwzAJDa10PyjzdIbyw
+        lnWIIWtZKPPsoVoKVopUWEU3TNhpWmaVhFrUL/O6SN3w=="
+~~~
+
 The corresponding signature metadata derived from this header field is:
 
 The corresponding Signature Input is:
+
+~~~
+date: Tue, 07 Jun 2014 20:51:35 GMT
+~~~
 
 # Topics for Working Group Discussion {#wg-discuss}
 
@@ -700,7 +874,10 @@ Topics are not listed in any particular order.
 
 ### Confusing guidance on algorithm and key identification {#issue-alg-keyid}
 
-The current draft encourages determining the Algorithm metadata property from the `keyId` field, both in the guidance for the use of `algorithm` and `keyId`, and the definition for the `hs2019` algorithm and deprecation of the other algorithms in the registry.
+The current draft encourages determining the Algorithm metadata property from the `keyId` field, both in the guidance for the use of `algorithm` and
+`keyId`, and
+the definition for the `hs2019` algorithm and
+deprecation of the other algorithms in the registry.
 The current state arose from concern that a malicious party could change the value of the `algorithm` parameter, potentially tricking the verifier into accepting a signature that would not have been verified under the actual parameter.
 
 Punting algorithm identification into `keyId` hurts interoperability, since we aren't defining the syntax or semantics of `keyId`.
@@ -708,7 +885,7 @@ It actually goes against that claim, as we are dictating that the signing algori
 It also renders the algorithm registry essentially useless.
 Instead of this approach, we can protect against manipulation of the Signature header field by adding support for (and possibly mandating) including Signature metadata within the Signature Input.
 
-### Lack of definition of 
+### Lack of definition of keyId hurts interoperability 
 
 The current text leaves the format and semantics of `keyId` completely up to the implementation.
 This is primarily due to the fact that most implementers of Cavage have extensive investment in key distribution and management, and just need to plug an identifier into the header.
@@ -718,41 +895,60 @@ It may be enough to punt this to profiling specs, but this needs to be explored 
 ### Algorithm Registry duplicates work of JWA
 
 {{?RFC7518}} already defines an IANA registry for cryptographic algorithms.
-This wasn't used by Cavage out of concerns about complexity of JOSE, and issues with JWE and JWS being too flexible, leading to insecure combinations of options.
-Using JWA's definitions does not need to mean we're using JOSE, however.
+
+This wasn't used by Cavage out of concerns about complexity of JOSE,
+and issues with JWE and JWS being too flexible,
+leading to insecure combinations of options.
+Using JWA's definitions does not need to mean we're using JOSE,
+however.
 We should look at if/how we can leverage JWA's work without introducing too many sharp edges for implementers.
 
-In any use of JWS algorithms, this spec would define a way to create the JWS Signing Input string to be applied to the algorithm. It should be noted that this is incompatible with JWS itself, which requires the inclusion of a structured header in the signature input.
+In any use of JWS algorithms,
+this spec would define a way to create the JWS Signing Input string to be applied to the algorithm. It should be noted that this is incompatible with JWS itself,
+which requires the inclusion of a structured header in the signature input.
 
-A possible approach is to incorporate all elements of the JWA signature algorithm registry into this spec using a prefix or other marker, such as `jws-RS256` for the RSA 256 JSON Web Signature algorithm.
+A possible approach is to incorporate all elements of the JWA signature algorithm registry into this spec using a prefix or other marker,
+such as `jws-RS256` for the RSA 256 JSON Web Signature algorithm.
 
 ### Algorithm Registry should not be initialized with deprecated entries
 
 The initial entries in this document reflect those in Cavage.
-The ones that are marked deprecated were done so because of the issue explained in {{issue-alg-keyid}}, with the possible exception of `rsa-sha1`.
+The ones that are marked deprecated were done so because of the issue explained in {{issue-alg-keyid}},
+with the possible exception of `rsa-sha1`.
 We should probably just remove that one.
 
 ### No percent-encoding normalization of path/query
 
 See: [issue #26](https://github.com/w3c-dvcg/http-signatures/issues/26)
 
-The canonicalization rules for `(request-target)` do not perform handle minor, semantically meaningless differences in percent-encoding, such that verification could fail if an intermediary normalizes the effective request URI prior to forwarding the message.
+The canonicalization rules for `(request-target)` do not perform handle minor,
+semantically meaningless differences in percent-encoding,
+such that verification could fail if an intermediary normalizes the effective request URI prior to forwarding the message.
 
-At a minimum, they should be case and percent-encoding normalized as described in sections [6.2.2.1](RFC3986) and [6.2.2.2](RFC3986) of {{?RFC3986}}.
+At a minimum,
+they should be case and percent-encoding normalized as described in sections [6.2.2.1](RFC3986) and [6.2.2.2](RFC3986) of {{?RFC3986}}.
 
 ### Misleading name for 
 
-The Covered Content list contains identifiers for more than just headers, so the `header` parameter name is no longer appropriate.
-Some alternatives: "content", "signed-content", "covered-content".
+The Covered Content list contains identifiers for more than just headers,
+so the `header` parameter name is no longer appropriate.
+Some alternatives: "content",
+"signed-content",
+"covered-content".
 
 ### Changes to whitespace in header field values break verification
 
-Some header field values contain RWS, OWS, and/or BWS.
-Since the header field value canonicalization rules do not address whitespace, changes to it (e.g., removing OWS or BWS or replacing strings of RWS with a single space) can cause verification to fail.
+Some header field values contain RWS,
+OWS,
+and/or BWS.
+Since the header field value canonicalization rules do not address whitespace,
+changes to it (e.g.,
+removing OWS or BWS or replacing strings of RWS with a single space) can cause verification to fail.
 
 ### Multiple Set-Cookie headers are not well supported
 
-The Set-Cookie header can occur multiple times but does not adhere to the list syntax, and thus is not well supported by the header field value concatenation rules.
+The Set-Cookie header can occur multiple times but does not adhere to the list syntax,
+and thus is not well supported by the header field value concatenation rules.
 
 ### Covered Content list is not signed
 
@@ -764,38 +960,48 @@ The Algorithm should be part of the Signature Input, to protect against maliciou
 
 ### Verification key identifier is not signed
 
-The Verification key identifier (e.g., the value used for the `keyId` parameter) should be part of the Signature Input, to protect against malicious changes.
+The Verification key identifier (e.g.,
+the value used for the `keyId` parameter) should be part of the Signature Input,
+to protect against malicious changes.
 
 ### Max values, precision for Integer String and Decimal String not defined
 
 The definitions for Integer String and Decimal String do not specify a maximum value.
 The definition for Decimal String (used to provide sub-second precision for Expiration Time) does not define minimum or maximum precision requirements.
-It should set a sane requirement here (e.g., MUST support up to 3 decimal places and no more).
+It should set a sane requirement here (e.g.,
+MUST support up to 3 decimal places and no more).
 
-### UNNAMED-1
+### keyId parameter value could break list syntax
 
-The `keyId` parameter value needs to be constrained so as to not break list syntax (e.g., by containing a comma).
+The `keyId` parameter value needs to be constrained so as to not break list syntax (e.g.,
+by containing a comma).
 
 ### Creation Time and Expiration Time do not allow for clock skew
 
-The processing instructions for Creation Time and Expiration Time imply that verifiers are not permitted to account for clock skew during signature verification.
+The processing instructions for Creation Time and Expiration Time imply 
+that verifiers are not permitted to account for clock skew during signature verification.
 
 ### Should require lowercased header field names as identifiers
 
 The current text allows mixed-case header field names when they are being used as content identifiers.
-This is unnecessary, as header field names are case-insensitive, and creates opportunity for incompatibility.
-Instead, content identifiers should always be lowercase.
+This is unnecessary,
+as header field names are case-insensitive,
+and creates opportunity for incompatibility.
+Instead,
+content identifiers should always be lowercase.
 
 ### Reconcile Date header and Creation Time
 
 The draft is missing guidance on if/how the Date header relates to signature Creation Time.
-There are cases where they may be different, such as if a signature was pre-created.
+There are cases where they may be different,
+such as if a signature was pre-created.
 Should Creation Time default to the value in the Date header if the `created` parameter is not specified?
 
 ### Remove algorithm-specific rules for content identifiers
 
 The rules that restrict when the signer can or must include certain identifiers appear to be related to the pseudo-revving of the Cavage draft that happened when the `hs2019` algorithm was introduced.
-We should drop these rules, as it can be expected that anyone implementing this draft will support all content identifiers.
+We should drop these rules,
+as it can be expected that anyone implementing this draft will support all content identifiers.
 
 ### Add guidance for signing compressed headers
 
@@ -804,12 +1010,17 @@ This guidance might be as simple as "sign the uncompressed header field value."
 
 ### Transformations to Via header field value break verification
 
-Intermediaries are permitted to strip comments from the Via header field value, and consolidate related sequences of entries.
-The canonicalization rules do not account for these changes, and thus they cause signature verification to fail if the Via header is signed. At the very least, guidance on signing or not signing Via headers needs to be included.
+Intermediaries are permitted to strip comments from the Via header field value,
+and consolidate related sequences of entries.
+The canonicalization rules do not account for these changes,
+and thus they cause signature verification to fail if the Via header is signed. At the very least,
+guidance on signing or not signing Via headers needs to be included.
 
 ### Case changes to case-insensitive header field values break verification
 
-Some header field values are case-insensitive, in whole or in part. The canonicalization rules do not account for this, thus a case change to a covered header field value causes verification to fail.
+Some header field values are case-insensitive,
+in whole or in part. The canonicalization rules do not account for this,
+thus a case change to a covered header field value causes verification to fail.
 
 ### Need more examples for Signature header
 
@@ -817,7 +1028,9 @@ Add more examples showing different cases e.g, where `created` or `expires` are 
 
 ### Expiration not needed
 
-In many cases, putting the expiration of the signature into the hands of the signer opens up more options for failures than necessary. Instead of the `expires`, any verifier can use the `created` field and an internal lifetime or offset to calculate expiration. We should consider dropping the `expires` field.
+In many cases,
+putting the expiration of the signature into the hands of the signer opens up more options for failures than necessary. Instead of the `expires`,
+any verifier can use the `created` field and an internal lifetime or offset to calculate expiration. We should consider dropping the `expires` field.
 
 ## Features
 
@@ -832,7 +1045,14 @@ Please let me know if this is a use case you have. ]]
 
 There may be scenarios where attaching multiple signatures to a single message is useful:
 
-This could be addressed by changing the Signature header syntax to accept a list of parameter sets for a single signature, e.g., by separating parameters with `";"` instead of `","`.
+- A gateway attaches a signature over headers it adds (e.g.,
+  Forwarded) to messages already signed by the user agent.
+- A signer attaches two signatures signed by different keys,
+  to be verified by different entities.
+
+This could be addressed by changing the Signature header syntax to accept a list of parameter sets for a single signature,
+e.g.,
+by separating parameters with `";"` instead of `","`.
 It may also be necessary to include a signature identifier parameter.
 
 ### Support for incremental signing of header field value list items
@@ -840,24 +1060,43 @@ It may also be necessary to include a signature identifier parameter.
 [[ Editor's note: I believe this use case is theoretical.
 Please let me know if this is a use case you have. ]]
 
-Currently, signing a header field value is all-or-nothing: either the entire value is signed, or none of it is.
-For header fields that use list syntax, it would be useful to be able to specify which items in the list are signed.
+Currently,
+signing a header field value is all-or-nothing: either the entire value is signed,
+or none of it is.
+For header fields that use list syntax,
+it would be useful to be able to specify which items in the list are signed.
 
 A simple approach that allowed the signer to indicate the list size at signing time would allow a signer to sign header fields that are may be appended to by intermediaries as the message makes its way to the recipient.
-Specifying list size in terms of number of items could introduce risks of list syntax is not strictly adhered to (e.g., a malicious party crafts a value that gets parsed by the application as 5 items, but by the verifier as 4).
-Specifying list size in number of octets might address this, but more exploration is required.
+Specifying list size in terms of number of items could introduce risks of list syntax is not strictly adhered to (e.g.,
+a malicious party crafts a value that gets parsed by the application as 5 items,
+but by the verifier as 4).
+Specifying list size in number of octets might address this,
+but more exploration is required.
 
 ### Support expected authority changes
 
-In some cases, the authority of the effective request URI may be expected to change, for example from "public-service-name.example.com" to "service-host-1.public-service-name.example.com".
-This is commonly the case for services that are hosted behind a load-balancing gateway, where the client sends requests to a publicly known domain name for the service, and these requests are transformed by the gateway into requests to specific hosts in the service fleet.
+In some cases,
+the authority of the effective request URI may be expected to change,
+for example from "public-service-name.example.com" to "service-host-1.public-service-name.example.com".
+This is commonly the case for services that are hosted behind a load-balancing gateway,
+where the client sends requests to a publicly known domain name for the service,
+and these requests are transformed by the gateway into requests to specific hosts in the service fleet.
 
-One possible way to handle this would be to special-case the Host header field to allow verifier to substitute a known expected value, or a value provided in another header field (e.g., Via) when generating the Signature Input, provided that the verifier also recognizes the real value in the Host header.
-Alternatively, this logic could apply to an `(audience)` content identifier.
+One possible way to handle this would be to special-case the Host header field to allow verifier to substitute a known expected value,
+or a value provided in another header field (e.g.,
+Via) when generating the Signature Input,
+provided that the verifier also recognizes the real value in the Host header.
+Alternatively,
+this logic could apply to an `(audience)` content identifier.
 
 ### Support for signing specific cookies
 
-A signer may only wish to sign one or a few cookies, for example if the website requires its authentication state cookie to be signed, but also sets other cookies (e.g., for analytics, ad tracking, etc.)
+A signer may only wish to sign one or a few cookies,
+for example if the website requires its authentication state cookie to be signed,
+but also sets other cookies (e.g.,
+for analytics,
+ad tracking,
+etc.)
 
 # Acknowledgements {#acknowledgements}
 {:numbered="false"}
@@ -902,4 +1141,24 @@ Jeffrey Yasskin
 # Document History
 {:numbered="false"}
 
+*RFC EDITOR: please remove this section before publication*
+
+- draft-richanna-http-message-signatures
+
+  - -00
+
+     * Converted to xml2rfc v3 and reformatted to comply with RFC style guides.
+     * Removed Signature auth-scheme definition and related content.
+     * Removed conflicting normative requirements for use of algorithm parameter. Now MUST NOT be relied upon.
+     * Removed Extensions appendix.
+     * Rewrote abstract and introduction to explain context and need, and challenges inherent in signing HTTP messages.
+     * Rewrote and heavily expanded algorithm definition, retaining normative requirements.
+     * Added definitions for key terms, referenced RFC 7230 for HTTP terms.
+     * Added examples for canonicalization and signature generation steps.
+     * Rewrote Signature header definition, retaining normative requirements.
+     * Added default values for algorithm and expires parameters.
+     * Rewrote HTTP Signature Algorithms registry definition. Added change control policy and registry template. Removed suggested URI.
+     * Added IANA HTTP Signature Parameter registry.
+     * Added additional normative and informative references.
+     * Added Topics for Working Group Discussion section, to be removed prior to publication as an RFC.
 
