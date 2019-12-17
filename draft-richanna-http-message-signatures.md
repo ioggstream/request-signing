@@ -285,6 +285,17 @@ The following table contains non-normative example HTTP messages and their
 canonicalized `(request-target)` values.
 
 
+TODO: render this table in some way.
+
+|HTTP Message|(request-target)|
+|--- |--- |
+|POST /?param=value HTTP/1.1\nHost: www.example.com |post /?param=value|
+||post /a/b|
+||get /a/|
+||get /|
+||connect /|
+||options *|
+{: title="Non-normative examples of `(request-target)` canonicalization."}
 
 # HTTP Message Signatures {#message-signatures}
 
@@ -296,13 +307,55 @@ When successfully verified against an HTTP message, it provides cryptographic pr
 HTTP Message Signatures have metadata properties that provide information regarding the signature's generation and/or verification.
 The following metadata properties are defined:
 
+Algorithm:
+: An HTTP Signature Algorithm defined in the HTTP Signature Algorithms Registry defined in this document. It describes the signing and verification algorithms for the signature.
+
+Creation Time:
+: A timestamp representing the point in time that the signature was generated. Sub-second precision is not supported. A signature's Creation Time MAY be undefined, indicating that it is unknown.
+
+Covered Content:
+: An ordered list of content identifiers (Section 2) that indicates the metadata and message content that is covered by the signature. The order of identifiers in this list affects signature generation and verification, and therefore MUST be preserved.
+
+Expiration Time:
+: A timestamp representing the point in time at which the signature expires. An expired signature always fails verification. A signature's Expiration Time MAY be undefined, indicating that the signature does not expire.
+
+Verification Key Material:
+: The key material required to verify the signature.
+
+
+
 ## Creating a Signature {#create}
 
 In order to create a signature, a signer completes the following process:
 
+1. Choose key material and algorithm, and set metadata properties {{choose-metadata}}
+2. Create the Signature Input {{canonicalization}}
+3. Sign the Signature Input {{sign-sig-input}}
+
 The following sections describe each of these steps in detail.
 
 ### Choose and Set Signature Metadata Properties {#choose-metadata}
+
+1. The signer chooses an HTTP Signature Algorithm from those registered in the HTTP Signature Algorithms Registry defined by this document, and sets the signature's Algorithm property to that value.
+The signer MUST NOT choose an algorithm marked "Deprecated".
+The mechanism by which the signer chooses an algorithm is out of scope for this document.
+
+2. The signer chooses key material to use for signing and verification, and sets the signature's Verification Key Material property to the key material required for verification.
+The signer MUST choose key material that is appropriate for the signature's Algorithm, and that conforms to any requirements defined by the Algorithm, such as key size or format.
+The mechanism by which the signer chooses key material is out of scope for this document.
+
+3. The signer sets the signature's Creation Time property to the current time.
+
+4. The signer sets the signature's Expiration Time property to the time at which the signature is to expire, or to undefined if the signature will not expire.
+
+5. The signer creates an ordered list of content identifiers representing the message content and signature metadata to be covered by the signature, and assigns this list as the signature's Covered Content.
+Each identifier MUST be one of those defined in Section 2.
+This list MUST NOT be empty, as this would result in creating a signature over the empty string.
+If the signature's Algorithm name does not start with rsa, hmac, or ecdsa, signers SHOULD include (created) and (request-target) in the list.
+If the signature's Algorithm starts with rsa, hmac, or ecdsa, signers SHOULD include date and (request-target) in the list.
+Further guidance on what to include in this list and in what order is out of scope for this document.
+However, the list order is significant and once established for a given signature it MUST be preserved for that signature.
+
 
 For example, given the following HTTP message:
 
@@ -374,6 +427,17 @@ Xsqeax/WaHyRYOgaW6krxEGVaBQAfA2czYZhEA05Tb38ahq/gwDQ1bagd9rGnCHtAg==
 ## Verifying a Signature {#verify}
 
 In order to verify a signature, a verifier MUST:
+
+1. Examine the signature's metadata to confirm that the signature meets the requirements described 
+    in this document, as well as any additional requirements defined by the application such 
+    as which header fields or other content are required to be covered by the signature.
+
+2. Use the received HTTP message and the signature's metadata to recreate the Signature Input, 
+    using the process described in {{canonicalization}}.
+
+3. Use the signature's Algorithm and Verification Key Material with the recreated Signing Input 
+    to verify the signature value.
+
 
 A signature with a Creation Time that is in the future or an Expiration Time that is in the past MUST NOT be processed.
 
