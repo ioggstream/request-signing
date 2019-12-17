@@ -612,9 +612,11 @@ Signature: keyId="test-key-b", algorithm="rsa-sha256",
 
 ## HTTP Signature Algorithms Registry {#hsa-registry}
 
-This document defines HTTP Signature Algorithms, for which IANA is asked to create and maintain a new registry titled "HTTP Signature Algorithms".
+This document defines HTTP Signature Algorithms,
+for which IANA is asked to create and maintain a new registry titled "HTTP Signature Algorithms".
 Initial values for this registry are given in {{iana-hsa-contents}}.
-Future assignments and modifications to existing assignment are to be made through the Expert Review registration policy {{?RFC8126}} and shall follow the template presented in {{iana-hsa-template}}.
+Future assignments and modifications to existing assignment are to be made through
+the Expert Review registration policy {{?RFC8126}} and shall follow the template presented in {{iana-hsa-template}}.
 
 ### Registration Template {#iana-hsa-template}
 
@@ -641,8 +643,11 @@ Description
 
 ### Initial Contents {#iana-hsa-contents}
 
-[[ MS: The references in this section are problematic as many of the specifications that they refer to are too implementation specific, rather than just pointing to the proper signature and hashing specifications.
-A better approach might be just specifying the signature and hashing function specifications, leaving implementers to connect the dots (which are not that hard to connect). ]]
+[[ MS: The references in this section are problematic as many of the
+ specifications that they refer to are too implementation specific,
+rather than just pointing to the proper signature and hashing specifications.
+A better approach might be just specifying the signature and hashing function specifications,
+leaving implementers to connect the dots (which are not that hard to connect). ]]
 
 hs2019
 : 
@@ -682,10 +687,13 @@ ecdsa-sha256
 
 ## HTTP Signature Parameters Registry {#param-registry}
 
-This document defines the Signature header field, whose value contains a list of named parameters.
-IANA is asked to create and maintain a new registry titled "HTTP Signature Parameters" to record and maintain the set of named parameters defined for use within the Signature header field.
+This document defines the Signature header field,
+whose value contains a list of named parameters.
+IANA is asked to create and maintain a new registry titled "HTTP Signature Parameters" to record
+and maintain the set of named parameters defined for use within the Signature header field.
 Initial values for this registry are given in {{iana-param-contents}}.
-Future assignments and modifications to existing assignment are to be made through the Expert Review registration policy {{?RFC8126}} and shall follow the template presented in {{iana-param-template}}.
+Future assignments and modifications to existing assignment are to be made through the 
+Expert Review registration policy {{?RFC8126}} and shall follow the template presented in {{iana-param-template}}.
 
 ### Registration Template {#iana-param-template}
 
@@ -706,9 +714,11 @@ Each row in the table represents a distinct entry in the registry.
 
 # Security Considerations {#security}
 
-[[ TODO: need to dive deeper on this section; not sure how much of what's referenced below is actually applicable, or if it covers everything we need to worry about. ]]
+[[ TODO: need to dive deeper on this section; not sure how much of what's referenced
+ below is actually applicable, or if it covers everything we need to worry about. ]]
 
-[[ TODO: Should provide some recommendations on how to determine what content needs to be signed for a given use case. ]]
+[[ TODO: Should provide some recommendations on how to determine what 
+content needs to be signed for a given use case. ]]
 
 There are a number of security considerations to take into account when implementing or utilizing this specification.
 A thorough security analysis of this protocol, including its strengths and weaknesses, can be found in {{WP-HTTP-Sig-Audit}}.
@@ -985,30 +995,41 @@ date: Tue, 07 Jun 2014 20:51:35 GMT
 
 # Topics for Working Group Discussion {#wg-discuss}
 
-The goal of this draft document is to provide a starting point at feature parity and compatible with the cavage-12 draft. The draft has known issues that will need to be addressed during development, and in the spirit of keeping compatibility, these issues have been enumerated but not addressed in this version. The editor recommends the working group discuss the issues and features described in this section after adoption of the document by the working group.
+The goal of this draft document is to provide a starting point at feature parity and compatible with the cavage-12 draft. The draft has known issues that will need to be addressed during development,
+and in the spirit of keeping compatibility,
+these issues have been enumerated but not addressed in this version. The editor recommends the working group discuss the issues and features described in this section after adoption of the document by the working group.
 Topics are not listed in any particular order.
 
 ## Issues
 
 ### Confusing guidance on algorithm and key identification {#issue-alg-keyid}
 
-The current draft encourages determining the Algorithm metadata property from the `keyId` field, both in the guidance for the use of `algorithm` and
-`keyId`, and
+The current draft encourages determining the Algorithm metadata property from the `keyId` field,
+both in the guidance for the use of `algorithm` and
+`keyId`,
+and
 the definition for the `hs2019` algorithm and
 deprecation of the other algorithms in the registry.
-The current state arose from concern that a malicious party could change the value of the `algorithm` parameter, potentially tricking the verifier into accepting a signature that would not have been verified under the actual parameter.
+The current state arose from concern that a malicious party could change the value of the `algorithm` parameter,
+potentially tricking the verifier into accepting a signature that would not have been verified under the actual parameter.
 
-Punting algorithm identification into `keyId` hurts interoperability, since we aren't defining the syntax or semantics of `keyId`.
-It actually goes against that claim, as we are dictating that the signing algorithm must be specified by `keyId` or derivable from it.
+Punting algorithm identification into `keyId` hurts interoperability,
+since we aren't defining the syntax or semantics of `keyId`.
+It actually goes against that claim,
+as we are dictating that the signing algorithm must be specified by `keyId` or derivable from it.
 It also renders the algorithm registry essentially useless.
-Instead of this approach, we can protect against manipulation of the Signature header field by adding support for (and possibly mandating) including Signature metadata within the Signature Input.
+Instead of this approach,
+we can protect against manipulation of the Signature header field by adding support for (and possibly mandating) including Signature metadata within the Signature Input.
 
 ### Lack of definition of keyId hurts interoperability 
 
 The current text leaves the format and semantics of `keyId` completely up to the implementation.
-This is primarily due to the fact that most implementers of Cavage have extensive investment in key distribution and management, and just need to plug an identifier into the header.
-We should support those cases, but we also need to provide guidance for the developer that doesn't have that and just wants to know how to identify a key.
-It may be enough to punt this to profiling specs, but this needs to be explored more.
+This is primarily due to the fact that most implementers of Cavage have extensive investment in key distribution and management,
+and just need to plug an identifier into the header.
+We should support those cases,
+but we also need to provide guidance for the developer that doesn't have that and just wants to know how to identify a key.
+It may be enough to punt this to profiling specs,
+but this needs to be explored more.
 
 ### Algorithm Registry duplicates work of JWA
 
@@ -1022,10 +1043,12 @@ however.
 We should look at if/how we can leverage JWA's work without introducing too many sharp edges for implementers.
 
 In any use of JWS algorithms,
-this spec would define a way to create the JWS Signing Input string to be applied to the algorithm. It should be noted that this is incompatible with JWS itself,
+this spec would define a way to create the JWS Signing Input string to be applied to the algorithm.
+It should be noted that this is incompatible with JWS itself,
 which requires the inclusion of a structured header in the signature input.
 
-A possible approach is to incorporate all elements of the JWA signature algorithm registry into this spec using a prefix or other marker,
+A possible approach is to incorporate all elements of the JWA signature algorithm registry into
+this spec using a prefix or other marker,
 such as `jws-RS256` for the RSA 256 JSON Web Signature algorithm.
 
 ### Algorithm Registry should not be initialized with deprecated entries
@@ -1117,7 +1140,8 @@ Should Creation Time default to the value in the Date header if the `created` pa
 
 ### Remove algorithm-specific rules for content identifiers
 
-The rules that restrict when the signer can or must include certain identifiers appear to be related to the pseudo-revving of the Cavage draft that happened when the `hs2019` algorithm was introduced.
+The rules that restrict when the signer can or must include certain identifiers appear to be related
+to the pseudo-revving of the Cavage draft that happened when the `hs2019` algorithm was introduced.
 We should drop these rules,
 as it can be expected that anyone implementing this draft will support all content identifiers.
 
@@ -1147,8 +1171,10 @@ Add more examples showing different cases e.g, where `created` or `expires` are 
 ### Expiration not needed
 
 In many cases,
-putting the expiration of the signature into the hands of the signer opens up more options for failures than necessary. Instead of the `expires`,
-any verifier can use the `created` field and an internal lifetime or offset to calculate expiration. We should consider dropping the `expires` field.
+putting the expiration of the signature into the hands of the signer opens up more options for failures than necessary.
+Instead of the `expires`,
+any verifier can use the `created` field and an internal lifetime or offset to calculate expiration.
+We should consider dropping the `expires` field.
 
 ## Features
 
@@ -1193,7 +1219,8 @@ or none of it is.
 For header fields that use list syntax,
 it would be useful to be able to specify which items in the list are signed.
 
-A simple approach that allowed the signer to indicate the list size at signing time would allow a signer to sign header fields that are may be appended to by intermediaries as the message makes its way to the recipient.
+A simple approach that allowed the signer to indicate the list size at signing time would allow a signer
+to sign header fields that are may be appended to by intermediaries as the message makes its way to the recipient.
 Specifying list size in terms of number of items could introduce risks of list syntax is not strictly adhered to (e.g.,
 a malicious party crafts a value that gets parsed by the application as 5 items,
 but by the verifier as 4).
@@ -1209,7 +1236,8 @@ This is commonly the case for services that are hosted behind a load-balancing g
 where the client sends requests to a publicly known domain name for the service,
 and these requests are transformed by the gateway into requests to specific hosts in the service fleet.
 
-One possible way to handle this would be to special-case the Host header field to allow verifier to substitute a known expected value,
+One possible way to handle this would be to special-case the Host header field to allow
+verifier to substitute a known expected value,
 or a value provided in another header field (e.g.,
 Via) when generating the Signature Input,
 provided that the verifier also recognizes the real value in the Host header.
@@ -1229,9 +1257,11 @@ etc.)
 {:numbered="false"}
 
 This specification is based on the draft-cavage-http-signatures draft.
-The editor would like to thank the authors of that draft, Mark Cavage and Manu Sporny, for their work on that draft and their continuing contributions.
+The editor would like to thank the authors of that draft, Mark Cavage and Manu Sporny,
+for their work on that draft and their continuing contributions.
 
-The editor would also like to thank the following individuals for feedback on and implementations of the draft-cavage-http-signatures draft (in alphabetical order):
+The editor would also like to thank the following individuals for feedback on and implementations
+of the draft-cavage-http-signatures draft (in alphabetical order):
 Mark Adamcin,
 Mark Allen,
 Paul Annesley,
