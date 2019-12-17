@@ -379,7 +379,7 @@ The following table presents a non-normative example of metadata values that a s
 |Creation Time|Equal to the value specified in the Date header field.|
 |Expiration Time|Equal to the Creation Time plus five minutes.|
 |Verification Key Material|The public key provided in  and identified by the keyId value "test-key-b".|
-{: #example-metadata}
+{: title="Non-normative example metadata values" #example-metadata}
 
 
 ### Create the Signature Input {#canonicalization}
@@ -422,7 +422,7 @@ VJnsIOUjv20pqZMKO3phLCKX2/zQzJLCBQvF/5UKtnJiMp1ACNhG8LF0Q0FPWfe86YZBB
 xqrQr5WfjMu0LOO52ZAxi9KTWSlceJ2U361gDb7S5Deub8MaDrjUEpluphQeo8xyvHBoN
 Xsqeax/WaHyRYOgaW6krxEGVaBQAfA2czYZhEA05Tb38ahq/gwDQ1bagd9rGnCHtAg==
 ~~~
-{: artwork-name="example-sig-input" #example-sig-value}
+{: title="Non-normative example signature value" #example-sig-value}
 
 ## Verifying a Signature {#verify}
 
@@ -451,6 +451,11 @@ Applications using HTTP Message Signatures MAY impose requirements above and bey
 
 Some non-normative examples of additional requirements an application might define are:
 
+- Requiring a specific set of header fields to be signed (e.g., Authorization, Digest).
+- Enforcing a maximum signature age.
+- Prohibiting the use of certain algorithms, or mandating the use of an algorithm.
+- Requiring keys to be of a certain size (e.g., 2048 bits vs. 1024 bits).
+
 Application-specific requirements are expected and encouraged.
 When an application defines additional requirements, it MUST enforce them during the signature verification process, and signature verification MUST fail if the signature does not conform to the application's requirements.
 
@@ -462,6 +467,12 @@ Regardless of use case, applications MUST NOT accept signatures that do not conf
 The "Signature" HTTP header provides a mechanism to attach a signature to the HTTP message from which it was generated.
 The header field name is "Signature" and its value is a list of parameters and values, formatted according to the `signature` syntax defined below, using the extended Augmented Backus-Naur Form (ABNF) notation used in [RFC7230].
 
+
+~~~ abnf
+signature    = #( sig-param )
+sig-param    = token BWS "=" BWS ( token / quoted-string )
+~~~
+
 Each `sig-param` is the name of a parameter defined in the {{param-registry}} defined in this document.
 The initial contents of this registry are described in {{params}}.
 
@@ -471,9 +482,47 @@ The Signature header's parameters contain the signature value itself and the sig
 Unless otherwise specified, parameters MUST NOT occur multiple times in one header, whether with the same or different values.
 The following parameters are defined:
 
+algorithm:
+: 
+: RECOMMENDED. The algorithm parameter contains the name of the signature's Algorithm, as registered in the HTTP Signature Algorithms Registry defined by this document. Verifiers MUST determine the signature's Algorithm from the keyId parameter rather than from algorithm. If algorithm is provided and differs from or is incompatible with the algorithm or key material identified by keyId (for example, algorithm has a value of rsa-sha256 but keyId identifies an EdDSA key), then implementations MUST produce an error. Implementers should note that previous versions of this specification determined the signature's Algorithm using the algorithm parameter only, and thus could be utilized by attackers to expose security vulnerabilities. The default value for this parameter is "hs2019".
+
+created:
+: 
+: RECOMMENDED. The created parameter contains the signature's Creation Time, expressed as the canonicalized value of the (created) content identifier, as defined in Section 2. If not specified, the signature's Creation Time is undefined. This parameter is useful when signers are not capable of controlling the Date HTTP Header such as when operating in certain web browser environments.
+
+expires:
+: 
+: OPTIONAL. The expires parameter contains the signature's Expiration Time, expressed as the canonicalized value of the (expires) content identifier, as defined in Section 2. If the signature does not have an Expiration Time, this parameter MUST be omitted. If not specified, the signature's Expiration Time is undefined.
+
+headers:
+: 
+: OPTIONAL. The headers parameter contains the signature's Covered Content, expressed as a string containing a quoted list of the identifiers in the list, in the order they occur in the list, with a space " " between each identifier. If specified, identifiers for header fields SHOULD be lowercased and all others MUST be lowercased. The default value for this parameter is "(created)".
+
+keyId:
+: 
+: REQUIRED. The keyId parameter is a US-ASCII string whose value can be used by a verifier to identify and/or obtain the signature's Verification Key Material. The format and semantics of this value are out of scope for this document.
+
+signature:
+: 
+: REQUIRED. The signature parameter contains the signature value, as described in Section 3.2.3.
+
 ## Example
 
-The following is a non-normative example Signature header field representing the signature in {{example-sig-value}}:
+The following is a non-normative example Signature header field representing the signature in 
+{{example-sig-value}}:
+
+~~~
+Signature: keyId="test-key-b", algorithm="rsa-sha256",
+    created=1402170695, expires=1402170995,
+    headers="(request-target) (created) host date cache-control
+        x-emptyheader x-example",
+    signature="T1l3tWH2cSP31nfuvc3nVaHQ6IAu9YLEXg2pCeEOJETXnlWbgKtBTa
+        XV6LNQWtf4O42V2DZwDZbmVZ8xW3TFW80RrfrY0+fyjD4OLN7/zV6L6d2v7uB
+        puWZ8QzKuHYFaRNVXgFBXN3VJnsIOUjv20pqZMKO3phLCKX2/zQzJLCBQvF/5
+        UKtnJiMp1ACNhG8LF0Q0FPWfe86YZBBxqrQr5WfjMu0LOO52ZAxi9KTWSlceJ
+        2U361gDb7S5Deub8MaDrjUEpluphQeo8xyvHBoNXsqeax/WaHyRYOgaW6krxE
+        GVaBQAfA2czYZhEA05Tb38ahq/gwDQ1bagd9rGnCHtAg=="
+~~~
 
 # IANA Considerations {#iana}
 
@@ -485,11 +534,67 @@ Future assignments and modifications to existing assignment are to be made throu
 
 ### Registration Template {#iana-hsa-template}
 
+Algorithm Name
+: 
+: An identifier for the HTTP Signature Algorithm. The name MUST be an ASCII string consisting 
+  only of lower-case characters ("a" - "z"), digits ("0" - "9"), and hyphens ("-"),
+  and SHOULD NOT exceed 20 characters in length.
+  The identifier MUST be unique within the context of the registry.
+
+Status:
+: 
+: A brief text description of the status of the algorithm.
+  The description MUST begin with one of "Active" or "Deprecated", and MAY provide 
+  further context or explanation as to the reason for the status.
+
+Description
+: 
+: A description of the algorithm used to sign the signing string 
+  when generating an HTTP Message Signature, or instructions on how to determine 
+  that algorithm.
+  When the description specifies an algorithm, it MUST include a reference to the document 
+  or documents that define the algorithm.
+
 ### Initial Contents {#iana-hsa-contents}
 
 [[ MS: The references in this section are problematic as many of the specifications that they refer to are too implementation specific, rather than just pointing to the proper signature and hashing specifications.
 A better approach might be just specifying the signature and hashing function specifications, leaving implementers to connect the dots (which are not that hard to connect). ]]
 
+hs2019
+: 
+: Algorithm Name hs2019
+: Status active
+: Description Derived from metadata associated with keyId. Recommend support for:
+
+    - RSASSA-PSS [RFC8017] using SHA-512 [RFC6234]
+    - HMAC [RFC2104] using SHA-512 [RFC6234]
+    - ECDSA using curve P-256 [DSS] and SHA-512 [RFC6234]
+    - Ed25519ph, Ed25519ctx, and Ed25519 [RFC8032]
+
+
+rsa-sha1
+: 
+: Algorithm Name rsa-sha1
+: Status Deprecated; SHA-1 not secure. 
+: Description RSASSA-PKCS1-v1_5 [RFC8017] using SHA-1 [RFC6234]
+
+rsa-sha256
+: 
+: Algorithm Name rsa-sha256
+: Status Deprecated; specifying signature algorithm enables attack vector.
+: Description RSASSA-PKCS1-v1_5 [RFC8017] using SHA-256 [RFC6234]
+
+hmac-sha256
+: 
+: Algorithm Name hmac-sha256
+: Status Deprecated; specifying signature algorithm enables attack vector.
+: Description HMAC [RFC2104] using SHA-256 [RFC6234]
+
+ecdsa-sha256
+: 
+: Algorithm Name ecdsa-sha256
+: Status Deprecated; specifying signature algorithm enables attack vector.
+: Description ECDSA using curve P-256 [DSS] and SHA-256 [RFC6234]
 
 ## HTTP Signature Parameters Registry {#param-registry}
 
